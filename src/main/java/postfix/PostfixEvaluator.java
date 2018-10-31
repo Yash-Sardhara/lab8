@@ -1,5 +1,6 @@
 package postfix;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -38,6 +39,48 @@ public class PostfixEvaluator {
 	 */
 	double eval( ) throws MalformedExpressionException {
 		// TODO: Implement this method.
+        Stack<Double> postfix_Evaluator = new Stack<>();
+        Scanner arithmeticExpressionScanner = new Scanner(arithmeticExpr);
+        double answer;
+
+        while(!arithmeticExpressionScanner.isEmpty()){
+            Token current_Token = arithmeticExpressionScanner.getToken();
+            arithmeticExpressionScanner.eatToken();
+            double opperandTwo;
+            double opperandOne;
+            if (current_Token.isDouble()){
+                postfix_Evaluator.push(current_Token.getValue());
+            }
+            else{
+                try{
+                   opperandTwo = postfix_Evaluator.pop();
+                   opperandOne = postfix_Evaluator.pop();
+                }
+                catch (EmptyStackException e){
+                    throw new  MalformedExpressionException();
+                }
+
+                if(current_Token.getName().equals("+") ){
+                    postfix_Evaluator.push(opperandTwo + opperandOne);
+                }
+                else if(current_Token.getName().equals("-") ){
+                    postfix_Evaluator.push(opperandOne - opperandTwo);
+                }
+                else if(current_Token.getName().equals("*") ){
+                    postfix_Evaluator.push(opperandTwo * opperandOne);
+                }
+                else if(current_Token.getName().equals("/") ){
+                    postfix_Evaluator.push(opperandOne / opperandTwo);
+                }
+            }
+        }
+
+        answer = postfix_Evaluator.pop();
+
+        if(!postfix_Evaluator.isEmpty()){
+            throw new MalformedExpressionException();
+        }
+
 		// The code provided here is for illustration only, and
 		// can be deleted when you write your implementation.
 
@@ -47,9 +90,9 @@ public class PostfixEvaluator {
 		
 		// Use the Scanner to get the elements (tokens) in the
 		// arithmetic expression.
-		
-		Scanner scanner = new Scanner(arithmeticExpr);
-		Token currToken = scanner.getToken();
+
+		//Scanner scanner = new Scanner(arithmeticExpr);
+		//Token currToken = scanner.getToken();
 		
 		// now process the token, etc.
 		// You should read the implementation of the Token class
@@ -58,7 +101,7 @@ public class PostfixEvaluator {
 		// It is sufficient to support the four basic operations:
 		// addition, subtraction, multiplication & division.
 		
-		return 0.0;
+		return answer;
 	}
 	
 }
